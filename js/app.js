@@ -1,3 +1,6 @@
+//vue2 templates
+
+//Template to place scheduled classes in Semesters, Sorted on screen by Semester
 Vue.component('semester', {
 
   props: ['course','semester_name'],
@@ -5,10 +8,10 @@ Vue.component('semester', {
   <section v-if = "course.SEMESTER === semester_name && course.COMPLETED == true">
   <h6>{{course.CRS}} {{course.TITLE}}</h6>
 </section>`,
-
-
 });
 
+
+//Template to choose class, select grade and scheduled the class in a Semester
 Vue.component('classes_degree', {
 
   props: ['course','name',],
@@ -44,6 +47,7 @@ Vue.component('classes_degree', {
   </section>   `,
 });
 
+//Template to choose class(emphasis or electives), select grade and scheduled the class in a Semester
 Vue.component('classes_emphasis', {
 
   props: ['course','name', 'enumber'],

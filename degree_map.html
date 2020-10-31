@@ -1,18 +1,23 @@
+<!-- Auto Degree Map Prototype. Jesse Madsen 10-31-2020
+
+implemented
+As a student, I want to specify my current degree plan so I don't loose track of my goals:
+should allow specifying courses that I have taken
+should allow specifying a grade for courses taken
+should allow specifying future courses planned
+should allow specifying a semester for courses taken or planned
+As a student, I want the system to present my current plan so that I can review it and discuss it with counselors and professors.
+
+As a student, I want to be able to save and load my plan so that I can revisit my plan.
+Only implemented saving of emphasis.  -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head >
    <meta charset="utf-8">
    <title>Snow College Degree Map</title>
-   
-   <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-
-   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@2.4.1/dist/email.min.js"></script>
-
    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
    <link rel="stylesheet" href="css/styles.css" />
-   <link rel="stylesheet" href="css/dark.css" type="text/css" disabled />
-
    <script src="https://unpkg.com/vue@2"></script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
    <script src='js/app.js'></script>
@@ -113,17 +118,17 @@
           <br>
         </section></center>
 
-      <section v-if = "step > 1">         
-          <template v-for ="semester_name in semester_number" >
-            <center><h4>{{semester_name}}</h4></center>
-            <semester v-for ="course in data1" v-bind:course = "course" v-bind:semester_name = "semester_name" ></semester>
-            <hr/>
-          </template>
-      </section>
+        <section v-if = "step > 1">         
+            <template v-for ="semester_name in semester_number" >
+              <center><h4>{{semester_name}}</h4></center>
+              <semester v-for ="course in data1" v-bind:course = "course" v-bind:semester_name = "semester_name" ></semester>
+              <hr/>
+            </template>
+        </section>
 
-      </div> 
-      </div> 
-      </div> 
+        </div> 
+        </div> 
+        </div> 
     </form>
  
     <script>
@@ -134,11 +139,10 @@
 
         data:{
 
-          step: 1,
-          data2: [],
-          data1: [],
-          totalSteps: 6,
-          emphasis:" ",
+          step: 1,          //store step count
+          data1: [],        //this is an array of classes 
+          totalSteps: 6,    //max number of steps
+          emphasis:" ",     //the emphasis the user chooses
 
           semester_number: ["First Semester", 
                             "Second Semester",
@@ -150,15 +154,12 @@
                             "Eighth Semester",
                             "Ninth Semester" ],
 
-
-
         },
 
         mounted () {
           //https://jessemadsen1.github.io./course.json
           axios.get('https://jessemadsen1.github.io./SoftwareEngineering.json').then(response => {
-            this.data2 = response.data.table
-            this.parseJson()
+            this.data1 = response.data.table
           });
           if (localStorage.emphasis) {
             this.emphasis = localStorage.emphasis
@@ -173,33 +174,21 @@
     
 
         methods:{
-          //parseJson will take a json class files and add other properties to them
-          parseJson:function(){
 
-            i = 0;
-            while( i < App.data2.length){
-              this.data1[i] = this.data2[i]
-              //this.data2[i].EMPHASIS=null;
-              //this.data1.splice(i, 0, this.data2[i]);
-              i++
-            }
-
-          },
-
+          //decrease step count by 1
           prevStep:function(){
             this.step --
           },
 
+          //increase step count by 1
           nextStep:function(){
 
             if(this.step == 1){
               if(this.emphasis == " "){
                 alert("You need to choose an emphasis!")
                 return false
-              }
-            
+              }         
             }
-
             this.step ++;
           }
 
@@ -208,6 +197,6 @@
 
     </script>
 
-  </body>
+</body>
 </html>
 

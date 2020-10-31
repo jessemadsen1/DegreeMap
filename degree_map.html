@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head >
+   <meta charset="utf-8">
+   <title>Snow College Degree Map</title>
+   
+   <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@2.4.1/dist/email.min.js"></script>
+
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+   <link rel="stylesheet" href="css/styles.css" />
+   <link rel="stylesheet" href="css/dark.css" type="text/css" disabled />
+
+   <script src="https://unpkg.com/vue@2"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+   <script src='js/app.js'></script>
+   
+</head>
+
+<header >
+   <img src="img/snowcollegelogo-275x72.png" alt="Snow College" >
+</header>
+
+<body>
+ 
+  <div class="container">
+    <form class="well blockquote form-horizontal" id = "app1">
+     
+        <div class="form-group">
+          <label class="col-md-4 control-label"></label>  
+          <div class="col-md-4 inputGroupContainer">
+          <div class="input-group ">   
+          
+          <center><section v-if = "step == 1">
+          <h2>Software Engineering</h2>
+          <h3>Choose an Emphasis</h3>
+              <select v-model="emphasis">
+                <option :value = "null" disabled selected>Choose an emphasis</option>
+                <option>Digital Media Design</option>
+                <option>Entrepreneurship</option>
+                <option>Data Science</option>
+                <option>Web Development</option>
+              </select>
+        </section></center>
+
+         <center><section v-if = "step > 1">
+                 <center><h2>{{ emphasis }} </h2></center>
+                 <hr/>
+        </section></center>
+
+        <section v-if = "step == 2 "> 
+          <br> 
+          <center><h4>CS Classes</h4></center>      
+          <classes_degree v-for ="course in data1" v-bind:course = "course" name = "CS"></classes_degree>
+          <hr/>
+        </section>
+
+        <section v-if = "step == 3 "> 
+          <br> 
+          <center><h4>Math Classes</h4></center>      
+          <classes_degree v-for ="course in data1" v-bind:course = "course" name = "MATH"></classes_degree>
+          <hr/>
+        </section>
+
+        <section v-if = "step == 4 "> 
+          <br> 
+          <center><h4>Physics Classes</h4></center>      
+          <classes_degree v-for ="course in data1" v-bind:course = "course" name = "PHYS"></classes_degree>
+          <hr/>
+          <br> 
+          <center><h4>ENGL Classes</h4></center>      
+          <classes_degree v-for ="course in data1" v-bind:course = "course" name = "ENGL"></classes_degree>
+          <hr/>
+
+        </section>
+
+        <section v-if = "step == 5 "> 
+          <br> 
+          <center><h4>SE Classes</h4></center>      
+          <classes_degree v-for ="course in data1" v-bind:course = "course" name = "SE"></classes_degree>
+          <hr/>
+        </section>
+
+        <section v-if = "step == 6 "> 
+          <br> 
+          <center><h4>{{ emphasis }}: Emphasis</h4></center>
+          <section v-if ="emphasis  == 'Digital Media Design' ">    
+            <classes_emphasis v-for ="course in data1" v-bind:course = "course" name = "Digital Media Design" enumber = "0"></classes_emphasis>
+          </section> 
+          <section v-if ="emphasis  == 'Entrepreneurship' ">    
+            <classes_emphasis v-for ="course in data1" v-bind:course = "course" name = "Digital Media Design" enumber = "1"></classes_emphasis>
+          </section> 
+          <section v-if ="emphasis  == 'Data Science' ">    
+            <classes_emphasis v-for ="course in data1" v-bind:course = "course" name = "Digital Media Design" enumber = "2"></classes_emphasis>
+          </section> 
+          <section v-if ="emphasis  == 'Web Development' ">    
+            <classes_emphasis v-for ="course in data1" v-bind:course = "course" name = "Digital Media Design" enumber = "3"></classes_emphasis>
+          </section> 
+          <hr/>
+          <center><h4>Electives Classes(choose one)</h4></center>    
+            <classes_emphasis v-for ="course in data1" v-bind:course = "course" name = "Digital Media Design" enumber = "e"></classes_emphasis>
+          <hr/>
+        </section>
+
+        <center><section>
+          <br>
+          <button v-if = "step != 1"  @click.prevent = prevStep >Previous Step</button>
+          <button v-if = "step != totalSteps"  @click.prevent = nextStep >Next Step</button>
+          <button v-if = "step == 2"  @click.prevent = savePlan >Save</button>
+          <br>
+          <br>
+        </section></center>
+
+      <section v-if = "step > 1">         
+          <template v-for ="semester_name in semester_number" >
+            <center><h4>{{semester_name}}</h4></center>
+            <semester v-for ="course in data1" v-bind:course = "course" v-bind:semester_name = "semester_name" ></semester>
+            <hr/>
+          </template>
+      </section>
+
+      </div> 
+      </div> 
+      </div> 
+    </form>
+ 
+    <script>
+
+      const App = new Vue({
+
+        el: "#app1",
+
+        data:{
+
+          step: 1,
+          data2: [],
+          data1: [],
+          totalSteps: 6,
+          emphasis:" ",
+
+          semester_number: ["First Semester", 
+                            "Second Semester",
+                            "Third Semester", 
+                            "Fourth Semester", 
+                            "Fifth Semester",
+                            "Sixth Semester",
+                            "Seventh Semester",
+                            "Eighth Semester",
+                            "Ninth Semester" ],
+
+
+
+        },
+
+        mounted () {
+          //https://jessemadsen1.github.io./course.json
+          axios.get('https://jessemadsen1.github.io./SoftwareEngineering.json').then(response => {
+            this.data2 = response.data.table
+            this.parseJson()
+          });
+          if (localStorage.emphasis) {
+            this.emphasis = localStorage.emphasis
+          }
+        },
+    
+        watch: {
+          emphasis(newName) {
+            localStorage.emphasis= newName
+          }
+        },
+    
+
+        methods:{
+          //parseJson will take a json class files and add other properties to them
+          parseJson:function(){
+
+            i = 0;
+            while( i < App.data2.length){
+              this.data1[i] = this.data2[i]
+              //this.data2[i].EMPHASIS=null;
+              //this.data1.splice(i, 0, this.data2[i]);
+              i++
+            }
+
+          },
+
+          prevStep:function(){
+            this.step --
+          },
+
+          nextStep:function(){
+
+            if(this.step == 1){
+              if(this.emphasis == " "){
+                alert("You need to choose an emphasis!")
+                return false
+              }
+            
+            }
+
+            this.step ++;
+          }
+
+        },
+      });
+
+    </script>
+
+  </body>
+</html>
+
